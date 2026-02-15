@@ -1,4 +1,4 @@
-name: Deploy Encyclopedia
+name: Deploy E-Check Website
 
 on:
   push:
@@ -12,7 +12,7 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Code
         uses: actions/checkout@v3
 
       - name: Setup Python
@@ -20,14 +20,14 @@ jobs:
         with:
           python-version: '3.9'
 
-      - name: Install Pandas
-        run: pip install pandas
+      # Wir brauchen keine externen Libraries (pandas etc.), da das Skript nur Standard-Python nutzt!
+      # Das macht den Build extrem schnell.
 
-      - name: Build Site 🏗️
-        run: python build_wiki.py
+      - name: Webseite bauen 🏗️
+        run: python build_website.py
 
       - name: Deploy to GitHub Pages 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: site_output # WICHTIG: Das Skript speichert hier rein
+          folder: site_output
           branch: gh-pages
