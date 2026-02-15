@@ -6,64 +6,81 @@
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Dikaliumphosphat (E340II) - Lebensmittelchemie | E-Check</title>
             <meta name="description" content="Dikaliumphosphat, auch bekannt als E340II, ist ein pflanzlicher Lebensmittelzusatzstoff, der als pH-Regulator und Emulgator verwendet wird.">
-            <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Ist E340ii - Dikaliumphosphat gesund oder sch\u00e4dlich?", "description": "Dikaliumphosphat, auch bekannt als E340II, ist ein pflanzlicher Lebensmittelzusatzstoff, der als pH-Regulator und Emulgator verwendet wird.", "author": {"@type": "Organization", "name": "E-Check Datenbank \ud83d\udcd8"}, "publisher": {"@type": "Organization", "name": "E-Check Datenbank \ud83d\udcd8", "logo": {"@type": "ImageObject", "url": "https://[AlexFractalNode].github.io/[E-Nummern-Lexikon]/logo.png"}}, "mainEntity": {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Ist E340ii - Dikaliumphosphat vegan?", "acceptedAnswer": {"@type": "Answer", "text": "Ja."}}, {"@type": "Question", "name": "Ist E340ii - Dikaliumphosphat gesund?", "acceptedAnswer": {"@type": "Answer", "text": "Dikaliumphosphat gilt als sicher f\u00fcr die menschliche Gesundheit, wenn es in angemessenen Mengen konsumiert wird. Es kann jedoch bei bestimmten Personen, wie z.B. bei Menschen mit Nierenerkrankungen, zu Problemen f\u00fchren."}}]}}</script>
+            <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Ist E340ii - Dikaliumphosphat gesund?", "description": "Dikaliumphosphat, auch bekannt als E340II, ist ein pflanzlicher Lebensmittelzusatzstoff, der als pH-Regulator und Emulgator verwendet wird.", "author": {"@type": "Organization", "name": "E-Check Datenbank \ud83d\udcd8"}, "publisher": {"@type": "Organization", "name": "E-Check Datenbank \ud83d\udcd8", "logo": {"@type": "ImageObject", "url": "https://alexfractalnode.github.io/E-Nummern-Lexikon//logo.png"}}}</script>
             
 <style>
     :root { 
         --primary: #10b981; --primary-dark: #059669;
         --bg: #f9fafb; --text: #1f2937; --card-bg: #ffffff; --border: #e5e7eb;
-        --amazon: #ff9900;
+        --app-color: #3b82f6;
     }
     body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
     
+    /* NAV */
     nav { background: white; border-bottom: 1px solid var(--border); padding: 1rem 0; position: sticky; top: 0; z-index: 50; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
     .nav-container { max-width: 1000px; margin: 0 auto; padding: 0 1.5rem; display: flex; justify-content: space-between; align-items: center; }
     .logo { font-weight: 800; font-size: 1.25rem; color: var(--primary-dark); text-decoration: none; }
+    .nav-links { display: flex; align-items: center; }
     .nav-links a { color: #6b7280; text-decoration: none; font-size: 0.9rem; font-weight: 500; margin-left: 1.5rem; }
-
-    .container { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; width: 100%; box-sizing: border-box; flex: 1; }
     
-    .hero { text-align: center; padding: 4rem 1rem 3rem 1rem; background: white; border-bottom: 1px solid var(--border); }
-    .hero h1 { font-size: 2.5rem; margin-bottom: 0.5rem; letter-spacing: -0.025em; color: #111827; }
-    .search-box { width: 100%; max-width: 500px; padding: 16px 24px; border: 2px solid #e5e7eb; border-radius: 100px; font-size: 1.1rem; outline: none; transition: all 0.2s; display: block; margin: 2rem auto 0 auto; }
-    .search-box:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
+    /* APP BUTTON IN NAV */
+    .nav-app-btn { 
+        background: var(--app-color); color: white !important; padding: 8px 16px; border-radius: 99px; 
+        transition: transform 0.2s; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .nav-app-btn:hover { transform: scale(1.05); box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); }
 
+    /* FLOATING ACTION BUTTON (Mobile Only) */
+    .fab-app {
+        position: fixed; bottom: 20px; right: 20px; z-index: 100;
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: white; padding: 12px 20px; border-radius: 50px;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+        font-weight: bold; text-decoration: none; display: flex; align-items: center; gap: 8px;
+        transition: transform 0.2s; font-size: 0.95rem;
+    }
+    .fab-app:hover { transform: scale(1.05); }
+    @media(min-width: 800px) { .fab-app { display: none; } } /* PC braucht keinen FAB */
+
+    /* LAYOUT */
+    .container { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; width: 100%; box-sizing: border-box; flex: 1; }
+    .hero { text-align: center; padding: 4rem 1rem 3rem 1rem; background: white; border-bottom: 1px solid var(--border); }
+    .hero h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: #111827; }
+    .search-box { width: 100%; max-width: 500px; padding: 16px 24px; border: 2px solid #e5e7eb; border-radius: 100px; font-size: 1.1rem; outline: none; margin: 2rem auto 0 auto; display:block; }
+    .search-box:focus { border-color: var(--primary); }
+
+    /* GRID & CARDS */
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
     .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; text-decoration: none; color: inherit; transition: all 0.2s; display: flex; flex-direction: column; height: 100%; }
     .card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.1); border-color: var(--primary); }
-    
-    .card-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem; }
+    .card-header { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
     .e-code { font-size: 0.85rem; font-weight: 700; color: #9ca3af; text-transform: uppercase; }
     .card-title { font-size: 1.1rem; font-weight: 700; color: #111827; margin: 0.2rem 0 0.5rem 0; }
     .card-intro { font-size: 0.9rem; color: #6b7280; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 
+    /* BADGES */
     .badge { display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 99px; font-size: 0.75rem; font-weight: 700; }
     .bg-green { background-color: #d1fae5; color: #065f46; }
     .bg-orange { background-color: #ffedd5; color: #9a3412; }
     .bg-red { background-color: #fee2e2; color: #991b1b; }
     
+    /* DETAIL PAGE */
     .detail-header { background: white; border-bottom: 1px solid var(--border); padding: 3rem 0; text-align: center; }
     .detail-title { font-size: 2.5rem; font-weight: 800; color: #111827; margin: 0.5rem 0; }
-    
     .section-card { background: white; border-radius: 16px; border: 1px solid var(--border); padding: 2rem; margin-bottom: 2rem; }
-    .section-title { font-size: 1.25rem; font-weight: 700; color: #111827; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; }
-    
+    .section-title { font-size: 1.25rem; font-weight: 700; color: #111827; margin-bottom: 1rem; }
     .info-list li { padding: 0.75rem 0; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; }
     .info-list li:last-child { border-bottom: none; }
     
     /* AFFILIATE BOX */
-    .affiliate-box { background: linear-gradient(135deg, #fffbeb 0%, #fff7ed 100%); border: 1px solid #fed7aa; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 1.5rem; position: relative; overflow: hidden; }
+    .affiliate-box { background: linear-gradient(135deg, #fffbeb 0%, #fff7ed 100%); border: 1px solid #fed7aa; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 1.5rem; }
     .affiliate-icon { font-size: 2rem; background: white; width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-    .affiliate-content h4 { margin: 0 0 0.5rem 0; color: #9a3412; font-size: 1.1rem; }
-    .affiliate-content p { margin: 0; font-size: 0.95rem; color: #4b5563; }
-    .affiliate-btn { background: #f97316; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; display: inline-block; margin-top: 0.8rem; transition: background 0.2s; }
-    .affiliate-btn:hover { background: #ea580c; }
+    .affiliate-btn { background: #f97316; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; display: inline-block; margin-top: 0.8rem; }
     
-    .share-buttons { display: flex; gap: 10px; justify-content: center; margin-top: 2rem; }
-    .share-btn { padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: 500; color: white; }
-    .share-wa { background: #25D366; }
-    .share-tw { background: #1DA1F2; }
-
+    /* APP PROMO BOX */
+    .app-promo { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 1.5rem; text-align: center; margin-top: 3rem; }
+    .app-promo h3 { color: #1e40af; margin-top: 0; }
+    
     footer { background: white; border-top: 1px solid var(--border); padding: 2rem 0; text-align: center; color: #9ca3af; margin-top: auto; }
 </style>
 
@@ -74,12 +91,13 @@
         <div class="nav-container">
             <a href="index.html" class="logo">🧬 E-Check Datenbank 📘</a>
             <div class="nav-links">
-                <a href="index.html">Übersicht</a>
-                <a href="impressum.html">Rechtliches</a>
+                <a href="index.html">Lexikon</a>
+                <a href="https://alexfractalnode.github.io/e-check-app/" target="_blank" class="nav-app-btn">📱 App laden</a>
             </div>
         </div>
     </nav>
     
+            
             <header class="detail-header">
                 <div class="nav-container" style="flex-direction:column;">
                     <span class="e-code">E340II</span>
@@ -87,21 +105,58 @@
                     <span class="badge bg-green" style="padding: 6px 16px; font-size: 1rem;">Unbedenklich</span>
                 </div>
             </header>
+            
             <main class="container">
                 
-                <div class="section-card"><h2 class="section-title">💡 Überblick</h2><p style="font-size: 1.1rem; color: #4b5563;">Dikaliumphosphat, auch bekannt als E340II, ist ein pflanzlicher Lebensmittelzusatzstoff, der in vielen Lebensmitteln verwendet wird. Es dient als pH-Regulator und Emulgator. Dikaliumphosphat ist ein wichtiger Bestandteil vieler Lebensmittel und wird von vielen Herstellern verwendet.</p></div>
+                
+                <div class="section-card">
+                    <h2 class="section-title">💡 Überblick</h2>
+                    <p style="font-size: 1.1rem; color: #4b5563;">Dikaliumphosphat, auch bekannt als E340II, ist ein pflanzlicher Lebensmittelzusatzstoff, der in vielen Lebensmitteln verwendet wird. Es dient als pH-Regulator und Emulgator. Dikaliumphosphat ist ein wichtiger Bestandteil vieler Lebensmittel und wird von vielen Herstellern verwendet.</p>
+                </div>
+
                 <div class="grid" style="margin-top:0; margin-bottom: 2rem;">
-                    <div class="section-card" style="margin-bottom:0;"><h3 class="section-title">🏥 Gesundheits-Check</h3><p>Dikaliumphosphat gilt als sicher für die menschliche Gesundheit, wenn es in angemessenen Mengen konsumiert wird. Es kann jedoch bei bestimmten Personen, wie z.B. bei Menschen mit Nierenerkrankungen, zu Problemen führen.</p></div>
-                    <div class="section-card" style="margin-bottom:0;"><h3 class="section-title">🥗 Ernährung</h3><ul class="info-list"><li><span class="info-label">Vegan?</span> <span class="info-value">Ja 🌱</span></li><li><span class="info-label">Glutenfrei?</span> <span class="info-value">Ja 🍞</span></li><li><span class="info-label">Herkunft</span> <span class="info-value" style="text-align:right; font-size:0.9rem;">Pflanzlich</span></li></ul></div>
+                    <div class="section-card" style="margin-bottom:0;">
+                        <h3 class="section-title">🏥 Gesundheits-Check</h3>
+                        <p>Dikaliumphosphat gilt als sicher für die menschliche Gesundheit, wenn es in angemessenen Mengen konsumiert wird. Es kann jedoch bei bestimmten Personen, wie z.B. bei Menschen mit Nierenerkrankungen, zu Problemen führen.</p>
+                    </div>
+                    <div class="section-card" style="margin-bottom:0;">
+                        <h3 class="section-title">🥗 Ernährung</h3>
+                        <ul class="info-list">
+                            <li><span>Vegan?</span> <strong>Ja 🌱</strong></li>
+                            <li><span>Glutenfrei?</span> <strong>Ja 🍞</strong></li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="section-card"><h3 class="section-title">🏭 Verwendung</h3><p>Dikaliumphosphat wird in vielen Lebensmitteln verwendet, wie z.B. in Getränken, Backwaren, Desserts und als pH-Regulator in der Lebensmittelindustrie.</p></div>
-                <div class="section-card" style="border-left: 4px solid var(--primary);"><h3 class="section-title">🏁 Fazit</h3><p>Dikaliumphosphat (E340II) ist ein sicherer und weit verbreiteter Lebensmittelzusatzstoff, der in vielen Lebensmitteln verwendet wird.</p></div>
-                <div class="share-buttons">
-                    <a href="https://api.whatsapp.com/send?text=https://[AlexFractalNode].github.io/[E-Nummern-Lexikon]/e340ii-e340ii-dikaliumphosphat.html" target="_blank" class="share-btn share-wa">Per WhatsApp teilen</a>
+
+                <div class="section-card">
+                    <h3 class="section-title">🏭 Verwendung</h3>
+                    <p>Dikaliumphosphat wird in vielen Lebensmitteln verwendet, wie z.B. in Getränken, Backwaren, Desserts und als pH-Regulator in der Lebensmittelindustrie.</p>
                 </div>
-                <div style="text-align:center; margin-top:2rem;"><a href="index.html" style="color:var(--primary); font-weight:600; text-decoration:none;">← Zurück zur Übersicht</a></div>
+
+                <div class="section-card" style="border-left: 4px solid var(--primary);">
+                    <h3 class="section-title">🏁 Fazit</h3>
+                    <p>Dikaliumphosphat (E340II) ist ein sicherer und weit verbreiteter Lebensmittelzusatzstoff, der in vielen Lebensmitteln verwendet wird.</p>
+                    
+                    <div class="app-promo">
+                        <h3>⚡ Schneller checken?</h3>
+                        <p>Stehst du gerade im Supermarkt? Scanne den Barcode direkt mit unserer App.</p>
+                        <a href="https://alexfractalnode.github.io/e-check-app/" target="_blank" class="nav-app-btn" style="display:inline-flex;">📲 Scanner App öffnen</a>
+                    </div>
+                </div>
+
+                <div style="text-align:center; margin-top:2rem;">
+                    <a href="index.html" style="color:var(--primary); font-weight:600; text-decoration:none;">← Zurück zur Übersicht</a>
+                </div>
             </main>
-            <footer><p>&copy; 2026 E-Check Datenbank 📘</p><a href="impressum.html">Impressum</a> • <a href="datenschutz.html">Datenschutz</a></footer>
+            
+            <a href="https://alexfractalnode.github.io/e-check-app/" target="_blank" class="fab-app">
+                <span style="font-size:1.2rem;">📷</span> Jetzt scannen
+            </a>
+            
+            <footer>
+                <p>&copy; 2026 E-Check Datenbank 📘</p>
+                <a href="impressum.html">Impressum</a> • <a href="https://alexfractalnode.github.io/e-check-app/">Zur App</a>
+            </footer>
         </body>
         </html>
         
