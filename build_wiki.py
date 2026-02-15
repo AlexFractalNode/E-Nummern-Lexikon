@@ -1,166 +1,275 @@
-import pandas as pd
+import json
 import os
 import shutil
+import re
 from datetime import datetime
 
 # --- KONFIGURATION ---
 OUTPUT_DIR = 'site_output'
-DATA_FILE = 'additives.csv'
-SITE_NAME = "E-Check Lexikon 📘"
-BASE_URL = "https://[AlexFractalNode].github.io/[E-Nummern Lexikon]"
+DATA_FILE = 'generated_additives.json'
+SITE_NAME = "E-Check Datenbank 📘"
+BASE_URL = "https://[AlexFractalNode].github.io/[E-Nummern-Lexikon]"
 
-# IMPRESSUM
+# IMPRESSUM & DATENSCHUTZ (Deine Daten hier eintragen!)
 IMPRESSUM_NAME = "Alexander Heinze"
 IMPRESSUM_ADRESSE = "Am Fuchsgraben 28, 08056 Zwickau"
+IMPRESSUM_EMAIL = "alexander.heinze.01@gmail.com"
 
-# --- 1. DATEN LADEN ---
-print("📚 Lade E-Nummern Datenbank...")
-
-if os.path.exists(DATA_FILE):
-    df = pd.read_csv(DATA_FILE)
-    print(f"✅ {len(df)} Einträge aus '{DATA_FILE}' geladen.")
-else:
-    print("⚠️ Keine CSV gefunden. Erstelle Demo-Daten...")
-    # Demo-Daten, damit der Code sofort funktioniert
-    data = {
-        'code': ['E100', 'E120', 'E330', 'E621', 'E951'],
-        'name': ['Kurkumin', 'Echtes Karmin', 'Zitronensäure', 'Mononatriumglutamat', 'Aspartam'],
-        'risk': ['Unbedenklich', 'Bedenklich', 'Unbedenklich', 'Sehr Bedenklich', 'Umstritten'],
-        'category': ['Farbstoff', 'Farbstoff', 'Säuerungsmittel', 'Geschmacksverstärker', 'Süßstoff'],
-        'description': [
-            'Natürlicher Farbstoff aus der Kurkuma-Wurzel.',
-            'Roter Farbstoff, der aus Schildläusen gewonnen wird. Nicht vegan.',
-            'Kommt in Zitrusfrüchten vor, wird aber oft industriell durch Schimmelpilze hergestellt.',
-            'Kann bei empfindlichen Personen Kopfschmerzen auslösen (China-Restaurant-Syndrom).',
-            'Süßstoff, der oft in Light-Produkten verwendet wird. Steht im Verdacht, Migräne auszulösen.'
-        ],
-        'vegan': ['Ja', 'Nein', 'Ja', 'Ja', 'Ja']
-    }
-    df = pd.DataFrame(data)
-
-# Daten bereinigen
-df = df.fillna('')
-
-# --- 2. CSS DESIGN (Modern & Scientific) ---
+# --- CSS DESIGN (Modern & Professional) ---
 css_styles = """
 <style>
-    :root { --primary: #0ea5e9; --bg: #f8fafc; --text: #0f172a; --card: #ffffff; }
-    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; margin: 0; }
+    :root { 
+        --primary: #10b981; /* Modernes Grün */
+        --primary-dark: #059669;
+        --bg: #f3f4f6; 
+        --text: #1f2937; 
+        --card-bg: #ffffff;
+        --border: #e5e7eb;
+    }
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
     
-    nav { background: white; border-bottom: 1px solid #e2e8f0; padding: 1rem 0; position: sticky; top: 0; z-index: 10; }
-    .container { max-width: 900px; margin: 0 auto; padding: 0 1.5rem; }
-    .nav-flex { display: flex; justify-content: space-between; align-items: center; }
-    .logo { font-weight: 800; font-size: 1.3rem; color: var(--primary); text-decoration: none; }
+    /* Navigation */
+    nav { background: white; border-bottom: 1px solid var(--border); padding: 1rem 0; position: sticky; top: 0; z-index: 50; }
+    .nav-container { max-width: 1000px; margin: 0 auto; padding: 0 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-weight: 800; font-size: 1.25rem; color: var(--primary-dark); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+    .nav-links a { color: #6b7280; text-decoration: none; font-size: 0.9rem; font-weight: 500; margin-left: 1.5rem; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--primary); }
+
+    /* Layout */
+    .container { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; width: 100%; box-sizing: border-box; flex: 1; }
     
-    .hero { text-align: center; padding: 4rem 1rem; }
-    .hero h1 { font-size: 2.5rem; margin-bottom: 0.5rem; letter-spacing: -1px; }
+    /* Hero Section (Startseite) */
+    .hero { text-align: center; padding: 3rem 1rem; }
+    .hero h1 { font-size: 2.5rem; margin-bottom: 0.5rem; letter-spacing: -0.025em; color: #111827; }
+    .hero p { color: #6b7280; font-size: 1.1rem; max-width: 600px; margin: 0 auto 2rem auto; }
     
     /* Search Bar */
-    .search-box { width: 100%; max-width: 500px; padding: 15px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 1rem; margin: 0 auto; display: block; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+    .search-box { width: 100%; max-width: 500px; padding: 14px 20px; border: 1px solid #d1d5db; border-radius: 12px; font-size: 1rem; outline: none; transition: border-color 0.2s; display: block; margin: 0 auto; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+    .search-box:focus { border-color: var(--primary); ring: 2px solid var(--primary); }
 
-    /* Grid */
+    /* Grid (Cards) */
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
     
     /* Cards */
-    .card { background: var(--card); padding: 1.5rem; border-radius: 12px; border: 1px solid #e2e8f0; text-decoration: none; color: inherit; transition: transform 0.2s; display: block; }
-    .card:hover { transform: translateY(-4px); border-color: var(--primary); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; text-decoration: none; color: inherit; transition: all 0.2s; display: flex; flex-direction: column; height: 100%; position: relative; }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border-color: var(--primary); }
     
-    .e-code { font-size: 1.5rem; font-weight: 800; color: var(--text); }
-    .e-name { color: #64748b; font-weight: 500; margin-bottom: 1rem; display: block; }
-    
+    .card-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem; }
+    .e-code { font-size: 0.85rem; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; }
+    .card-title { font-size: 1.1rem; font-weight: 700; color: #111827; margin: 0.2rem 0 0.5rem 0; }
+    .card-intro { font-size: 0.9rem; color: #6b7280; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
     /* Badges */
-    .badge { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; }
-    .risk-safe { background: #dcfce7; color: #166534; }
-    .risk-medium { background: #fef9c3; color: #854d0e; }
-    .risk-high { background: #fee2e2; color: #991b1b; }
+    .badge { display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 99px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.025em; }
+    .bg-green { background-color: #d1fae5; color: #065f46; }
+    .bg-orange { background-color: #ffedd5; color: #9a3412; }
+    .bg-red { background-color: #fee2e2; color: #991b1b; }
     
     /* Detail Page */
-    .detail-header { background: white; padding: 3rem 0; border-bottom: 1px solid #e2e8f0; text-align: center; }
-    .detail-content { background: white; padding: 2rem; border-radius: 12px; margin-top: -2rem; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+    .detail-header { background: white; border-bottom: 1px solid var(--border); padding: 3rem 0; text-align: center; }
+    .detail-title { font-size: 2.5rem; font-weight: 800; color: #111827; margin: 0.5rem 0; }
+    .detail-subtitle { color: #6b7280; font-size: 1.1rem; }
     
-    .info-row { display: flex; justify-content: space-between; padding: 1rem 0; border-bottom: 1px solid #f1f5f9; }
-    .info-label { font-weight: 600; color: #64748b; }
+    .section-card { background: white; border-radius: 12px; border: 1px solid var(--border); padding: 2rem; margin-bottom: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .section-title { font-size: 1.25rem; font-weight: 700; color: #111827; margin-bottom: 1rem; border-bottom: 2px solid #f3f4f6; padding-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; }
     
-    footer { text-align: center; margin-top: 4rem; padding: 2rem; color: #94a3b8; font-size: 0.9rem; }
-    a { color: inherit; }
+    .info-list { list-style: none; padding: 0; margin: 0; }
+    .info-list li { padding: 0.75rem 0; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; }
+    .info-list li:last-child { border-bottom: none; }
+    .info-label { font-weight: 500; color: #6b7280; }
+    .info-value { font-weight: 600; color: #111827; }
+
+    /* Footer */
+    footer { background: white; border-top: 1px solid var(--border); padding: 2rem 0; text-align: center; color: #9ca3af; font-size: 0.9rem; margin-top: auto; }
+    footer a { color: #6b7280; text-decoration: none; margin: 0 10px; }
+    footer a:hover { color: var(--primary); }
 </style>
 """
 
-# --- 3. TEMPLATES ---
-def get_risk_class(risk_text):
-    r = str(risk_text).lower()
-    if 'unbedenklich' in r: return 'risk-safe'
-    if 'sehr bedenklich' in r: return 'risk-high'
-    return 'risk-medium'
+# --- HELPER FUNCTIONS ---
+def get_risk_class(rating):
+    r = str(rating).lower()
+    if 'unbedenklich' in r or 'safe' in r: return 'bg-green'
+    if 'vorsicht' in r or 'bedenklich' in r or 'caution' in r: return 'bg-orange'
+    return 'bg-red' # Default für "Gefährlich" oder unbekannt
 
-def build_nav():
+def clean_slug(text):
+    # Erstellt saubere URL: "E100 Kurkumin" -> "e100-kurkumin"
+    text = str(text).lower()
+    text = re.sub(r'[^a-z0-9]+', '-', text)
+    return text.strip('-')
+
+# --- TEMPLATES ---
+def build_nav(active_page=""):
     return f"""
     <nav>
-        <div class="container nav-flex">
-            <a href="index.html" class="logo">📘 E-Lexikon</a>
-            <div>
-                <a href="impressum.html" style="font-size:0.9rem; margin-left:1rem;">Rechtliches</a>
+        <div class="nav-container">
+            <a href="index.html" class="logo">🧬 {SITE_NAME}</a>
+            <div class="nav-links">
+                <a href="index.html">Übersicht</a>
+                <a href="impressum.html">Rechtliches</a>
             </div>
         </div>
     </nav>
     """
 
-# --- 4. SEITEN BAUEN ---
-if os.path.exists(OUTPUT_DIR): shutil.rmtree(OUTPUT_DIR)
-os.makedirs(OUTPUT_DIR)
+# --- MAIN BUILD PROCESS ---
+def build():
+    # 1. Output Ordner vorbereiten
+    if os.path.exists(OUTPUT_DIR):
+        shutil.rmtree(OUTPUT_DIR)
+    os.makedirs(OUTPUT_DIR)
 
-# A) Detailseiten
-for index, row in df.iterrows():
-    slug = row['code'].lower().replace(" ", "")
-    filename = f"{slug}.html"
+    # 2. Daten laden
+    try:
+        with open(DATA_FILE, 'r', encoding='utf-8') as f:
+            additives = json.load(f)
+        print(f"✅ {len(additives)} Einträge geladen.")
+    except Exception as e:
+        print(f"❌ Fehler beim Laden von {DATA_FILE}: {e}")
+        return
+
+    # 3. Detailseiten generieren
+    sitemap_urls = []
     
-    risk_badge = f"<span class='badge {get_risk_class(row['risk'])}'>{row['risk']}</span>"
-    
-    html = f"""
+    for item in additives:
+        # Daten vorbereiten
+        slug = clean_slug(f"{item.get('e_number', '')}-{item.get('name', '')}")
+        filename = f"{slug}.html"
+        
+        rating = item.get('health_check', {}).get('rating', 'Unbekannt')
+        rating_class = get_risk_class(rating)
+        
+        diet = item.get('dietary_info', {})
+        is_vegan = "Ja 🌱" if diet.get('is_vegan') else "Nein 🥩"
+        is_gluten = "Ja 🍞" if diet.get('is_gluten_free') else "Nein 🌾" # Achtung Logik: Ist glutenfrei? Ja.
+
+        # HTML Template füllen
+        html = f"""
+        <!DOCTYPE html>
+        <html lang="de">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>{item.get('seo_title', item.get('name'))} | {SITE_NAME}</title>
+            <meta name="description" content="{item.get('meta_description', '')}">
+            {css_styles}
+        </head>
+        <body>
+            {build_nav()}
+            
+            <header class="detail-header">
+                <div class="nav-container" style="flex-direction:column;">
+                    <span class="e-code">{item.get('e_number')}</span>
+                    <h1 class="detail-title">{item.get('name')}</h1>
+                    <span class="badge {rating_class}" style="padding: 6px 16px; font-size: 1rem;">{rating}</span>
+                </div>
+            </header>
+            
+            <main class="container">
+                <div class="section-card">
+                    <h2 class="section-title">💡 Überblick</h2>
+                    <p style="font-size: 1.1rem; color: #4b5563;">{item.get('intro_hook')}</p>
+                </div>
+
+                <div class="grid" style="margin-top:0; margin-bottom: 2rem;">
+                    <div class="section-card" style="margin-bottom:0;">
+                        <h3 class="section-title">🏥 Gesundheits-Check</h3>
+                        <p>{item.get('health_check', {}).get('details')}</p>
+                    </div>
+                    <div class="section-card" style="margin-bottom:0;">
+                        <h3 class="section-title">🥗 Ernährung</h3>
+                        <ul class="info-list">
+                            <li><span class="info-label">Vegan?</span> <span class="info-value">{is_vegan}</span></li>
+                            <li><span class="info-label">Glutenfrei?</span> <span class="info-value">{is_gluten}</span></li>
+                            <li><span class="info-label">Herkunft</span> <span class="info-value" style="text-align:right; font-size:0.9rem;">{diet.get('origin_explanation')}</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h3 class="section-title">🏭 Verwendung</h3>
+                    <p>{item.get('usage')}</p>
+                </div>
+
+                <div class="section-card" style="border-left: 4px solid var(--primary);">
+                    <h3 class="section-title">🏁 Fazit</h3>
+                    <p>{item.get('conclusion')}</p>
+                </div>
+
+                <div style="text-align:center; margin-top:2rem;">
+                    <a href="index.html" style="color:var(--primary); font-weight:600; text-decoration:none;">← Zurück zur Übersicht</a>
+                </div>
+            </main>
+            
+            <footer>
+                <p>&copy; {datetime.now().year} {SITE_NAME}</p>
+                <a href="impressum.html">Impressum</a> • <a href="datenschutz.html">Datenschutz</a>
+            </footer>
+        </body>
+        </html>
+        """
+        
+        with open(os.path.join(OUTPUT_DIR, filename), "w", encoding="utf-8") as f:
+            f.write(html)
+        sitemap_urls.append(f"{BASE_URL}/{filename}")
+
+    # 4. Index Seite generieren
+    print("🔨 Generiere Index...")
+    cards_html = ""
+    for item in additives:
+        slug = clean_slug(f"{item.get('e_number', '')}-{item.get('name', '')}")
+        rating = item.get('health_check', {}).get('rating', '')
+        rating_class = get_risk_class(rating)
+        
+        cards_html += f"""
+        <a href="{slug}.html" class="card filter-item">
+            <div class="card-header">
+                <span class="e-code">{item.get('e_number')}</span>
+                <span class="badge {rating_class}">{rating}</span>
+            </div>
+            <h3 class="card-title">{item.get('name')}</h3>
+            <p class="card-intro">{item.get('intro_hook')}</p>
+        </a>
+        """
+
+    index_html = f"""
     <!DOCTYPE html>
     <html lang="de">
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{row['code']} - {row['name']} | Ist das schädlich?</title>
-        <meta name="description" content="Alles über {row['code']} ({row['name']}). Risiken, Herkunft und ob es vegan ist.">
+        <title>{SITE_NAME} - Alle Zusatzstoffe im Check</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Ist das gesund? Die große Datenbank für Lebensmittel-Zusatzstoffe, E-Nummern und Inhaltsstoffe.">
         {css_styles}
+        <script>
+        function filterList() {{
+            var input = document.getElementById("search");
+            var filter = input.value.toUpperCase();
+            var cards = document.getElementsByClassName("filter-item");
+            
+            for (var i = 0; i < cards.length; i++) {{
+                var txt = cards[i].innerText;
+                if (txt.toUpperCase().indexOf(filter) > -1) {{
+                    cards[i].style.display = "flex";
+                }} else {{
+                    cards[i].style.display = "none";
+                }}
+            }}
+        }}
+        </script>
     </head>
     <body>
         {build_nav()}
         
-        <header class="detail-header">
-            <div class="container">
-                <span style="color:#64748b; font-weight:600; text-transform:uppercase;">{row['category']}</span>
-                <h1 style="font-size:3.5rem; margin:0.5rem 0;">{row['code']}</h1>
-                <h2 style="font-weight:400; color:#475569; margin-top:0;">{row['name']}</h2>
-                {risk_badge}
-            </div>
-        </header>
+        <div class="hero">
+            <h1>Was steckt wirklich in deinem Essen?</h1>
+            <p>Die transparente Enzyklopädie für Zusatzstoffe. KI-analysiert & verständlich.</p>
+            <input type="text" id="search" onkeyup="filterList()" class="search-box" placeholder="🔍 Suche nach E120, Vaseline, Farbstoff...">
+        </div>
         
         <main class="container">
-            <div class="detail-content">
-                <h3>Was ist das?</h3>
-                <p style="font-size:1.1rem;">{row['description']}</p>
-                
-                <div style="margin-top:2rem;">
-                    <div class="info-row">
-                        <span class="info-label">Kategorie</span>
-                        <span>{row['category']}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Vegan?</span>
-                        <span>{row['vegan']}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Risikoeinschätzung</span>
-                        <span>{row['risk']}</span>
-                    </div>
-                </div>
-                
-                <div style="margin-top:2rem; text-align:center;">
-                    <a href="index.html" style="text-decoration:underline; color:#0ea5e9;">← Zurück zur Übersicht</a>
-                </div>
+            <div class="grid">
+                {cards_html}
             </div>
         </main>
         
@@ -171,75 +280,67 @@ for index, row in df.iterrows():
     </body>
     </html>
     """
-    with open(os.path.join(OUTPUT_DIR, filename), "w", encoding="utf-8") as f: f.write(html)
+    with open(os.path.join(OUTPUT_DIR, "index.html"), "w", encoding="utf-8") as f:
+        f.write(index_html)
 
-# B) Index Seite
-cards_html = ""
-for index, row in df.iterrows():
-    slug = row['code'].lower().replace(" ", "")
-    risk_class = get_risk_class(row['risk'])
-    cards_html += f"""
-    <a href="{slug}.html" class="card filter-item">
-        <div style="display:flex; justify-content:space-between;">
-            <span class="e-code">{row['code']}</span>
-            <span class="badge {risk_class}">{row['risk']}</span>
-        </div>
-        <span class="e-name">{row['name']}</span>
-        <div style="font-size:0.9rem; color:#64748b;">{row['category']}</div>
-    </a>
+    # 5. Rechtstexte generieren (Job-Radar Professional Style)
+    impressum_html = f"""
+    <!DOCTYPE html>
+    <html lang="de">
+    <head><title>Impressum | {SITE_NAME}</title><meta name="viewport" content="width=device-width, initial-scale=1">{css_styles}</head>
+    <body>
+        {build_nav()}
+        <main class="container" style="max-width:800px;">
+            <div class="section-card">
+                <h1 style="margin-bottom:2rem;">Impressum</h1>
+                <p>Angaben gemäß § 5 TMG</p>
+                <p><strong>{IMPRESSUM_NAME}</strong><br>{IMPRESSUM_ADRESSE}</p>
+                <p><strong>Kontakt:</strong><br>E-Mail: {IMPRESSUM_EMAIL}</p>
+                <p><strong>Haftungsausschluss:</strong><br>Die Inhalte wurden mit KI-Unterstützung erstellt. Wir übernehmen keine Gewähr für die Richtigkeit, Vollständigkeit und Aktualität der bereitgestellten Informationen, insbesondere zu gesundheitlichen Aspekten. Diese Seite ersetzt keine ärztliche Beratung.</p>
+            </div>
+            <a href="index.html" style="color:var(--primary);">← Zurück zur Startseite</a>
+        </main>
+        <footer><p>&copy; {datetime.now().year} {SITE_NAME}</p></footer>
+    </body>
+    </html>
     """
-
-index_html = f"""
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <title>{SITE_NAME} - Alle Zusatzstoffe erklärt</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    {css_styles}
-    <script>
-    function filterList() {{
-        var input = document.getElementById("search");
-        var filter = input.value.toUpperCase();
-        var cards = document.getElementsByClassName("filter-item");
-        
-        for (var i = 0; i < cards.length; i++) {{
-            var txt = cards[i].innerText;
-            if (txt.toUpperCase().indexOf(filter) > -1) {{
-                cards[i].style.display = "";
-            }} else {{
-                cards[i].style.display = "none";
-            }}
-        }}
-    }}
-    </script>
-</head>
-<body>
-    {build_nav()}
-    <div class="hero">
-        <h1>Was steckt in deinem Essen?</h1>
-        <p style="color:#64748b; font-size:1.2rem;">Die große Enzyklopädie der Lebensmittel-Zusatzstoffe.</p>
-        <br>
-        <input type="text" id="search" onkeyup="filterList()" class="search-box" placeholder="🔍 Suche nach E120, Aspartam, Farbstoff...">
-    </div>
     
-    <main class="container">
-        <div class="grid">
-            {cards_html}
-        </div>
-    </main>
+    datenschutz_html = f"""
+    <!DOCTYPE html>
+    <html lang="de">
+    <head><title>Datenschutz | {SITE_NAME}</title><meta name="viewport" content="width=device-width, initial-scale=1">{css_styles}</head>
+    <body>
+        {build_nav()}
+        <main class="container" style="max-width:800px;">
+            <div class="section-card">
+                <h1 style="margin-bottom:2rem;">Datenschutzerklärung</h1>
+                <h2>1. Datenschutz auf einen Blick</h2>
+                <p><strong>Allgemeine Hinweise</strong><br>Wir nehmen den Schutz Ihrer persönlichen Daten sehr ernst. Diese Webseite speichert keine persönlichen Daten der Nutzer und verwendet keine Tracking-Cookies.</p>
+                <p><strong>Hosting bei GitHub Pages</strong><br>Diese Seite wird bei GitHub Inc. gehostet. GitHub kann technische Log-Daten (IP-Adressen) zur Gewährleistung der Sicherheit und Stabilität des Dienstes erfassen. Weitere Informationen finden Sie in der Datenschutzerklärung von GitHub.</p>
+                <h2>2. Cookies & Tracking</h2>
+                <p>Wir setzen auf dieser Seite keine Analyse-Tools (wie Google Analytics) und keine Werbe-Tracker ein.</p>
+            </div>
+            <a href="index.html" style="color:var(--primary);">← Zurück zur Startseite</a>
+        </main>
+        <footer><p>&copy; {datetime.now().year} {SITE_NAME}</p></footer>
+    </body>
+    </html>
+    """
     
-    <footer>
-        <p>&copy; {datetime.now().year} {SITE_NAME}</p>
-        <a href="impressum.html">Impressum</a> • <a href="datenschutz.html">Datenschutz</a>
-    </footer>
-</body>
-</html>
-"""
-with open(os.path.join(OUTPUT_DIR, "index.html"), "w", encoding="utf-8") as f: f.write(index_html)
+    with open(os.path.join(OUTPUT_DIR, "impressum.html"), "w", encoding="utf-8") as f: f.write(impressum_html)
+    with open(os.path.join(OUTPUT_DIR, "datenschutz.html"), "w", encoding="utf-8") as f: f.write(datenschutz_html)
 
-# C) Rechtstexte (Platzhalter)
-legal_html = f"""<html><head><title>Rechtliches</title>{css_styles}</head><body>{build_nav()}<main class='container' style='margin-top:4rem'><h1>Impressum & Datenschutz</h1><p>{IMPRESSUM_NAME}<br>{IMPRESSUM_ADRESSE}</p><a href='index.html'>Zurück</a></main></body></html>"""
-with open(os.path.join(OUTPUT_DIR, "impressum.html"), "w", encoding="utf-8") as f: f.write(legal_html)
-with open(os.path.join(OUTPUT_DIR, "datenschutz.html"), "w", encoding="utf-8") as f: f.write(legal_html)
+    # 6. Sitemap
+    sitemap_xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    sitemap_urls.append(f"{BASE_URL}/")
+    for url in sitemap_urls:
+        sitemap_xml += f'  <url><loc>{url}</loc><changefreq>monthly</changefreq></url>\n'
+    sitemap_xml += '</urlset>'
+    
+    with open(os.path.join(OUTPUT_DIR, "sitemap.xml"), "w", encoding="utf-8") as f:
+        f.write(sitemap_xml)
 
-print(f"✅ Lexikon generiert! {len(df)} Seiten im Ordner '{OUTPUT_DIR}' erstellt.")
+    print(f"✅ Fertig! Webseite im Ordner '{OUTPUT_DIR}' erstellt.")
+
+if __name__ == "__main__":
+    build()
