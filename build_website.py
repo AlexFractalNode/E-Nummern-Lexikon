@@ -14,10 +14,12 @@ BASE_URL = "https://alexfractalnode.github.io/E-Nummern-Lexikon/"
 APP_URL = "https://alexfractalnode.github.io/e-check-app/" 
 APP_NAME = "E-Check App"
 
-# IMPRESSUM
+# IMPRESSUM & DATENSCHUTZ KONFIGURATION
 IMPRESSUM_NAME = "Alexander Heinze"
 IMPRESSUM_ADRESSE = "Am Fuchsgraben 28, 08056 Zwickau"
 IMPRESSUM_EMAIL = "alexander.heinze.01@gmail.com"
+# Optional: Telefonnummer, falls gewünscht (sonst leer lassen)
+IMPRESSUM_TEL = "" 
 
 # MONETARISIERUNG & AFFILIATE
 AMAZON_PARTNER_TAG = "dein-tag-21" 
@@ -109,7 +111,15 @@ css_styles = f"""
     .app-promo {{ background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 1.5rem; text-align: center; margin-top: 3rem; }}
     .app-promo h3 {{ color: #1e40af; margin-top: 0; }}
     
+    /* LEGAL PAGES */
+    .legal-content h1 {{ color: var(--primary-dark); border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem; }}
+    .legal-content h2 {{ margin-top: 2rem; color: #374151; }}
+    .legal-content h3 {{ margin-top: 1.5rem; color: #4b5563; font-size: 1.1rem; }}
+    .legal-content p, .legal-content li {{ color: #6b7280; margin-bottom: 1rem; }}
+    
     footer {{ background: white; border-top: 1px solid var(--border); padding: 2rem 0; text-align: center; color: #9ca3af; margin-top: auto; }}
+    footer a {{ color: #6b7280; text-decoration: none; margin: 0 10px; font-size: 0.9rem; }}
+    footer a:hover {{ color: var(--primary); text-decoration: underline; }}
 </style>
 """
 
@@ -171,6 +181,111 @@ def build_nav():
         </div>
     </nav>
     """
+
+def build_footer():
+    return f"""
+    <footer>
+        <p>&copy; {datetime.now().year} {SITE_NAME}</p>
+        <div style="margin-top: 10px;">
+            <a href="impressum.html">Impressum</a> • 
+            <a href="datenschutz.html">Datenschutzerklärung</a> • 
+            <a href="{APP_URL}" target="_blank">Zur App</a>
+        </div>
+    </footer>
+    """
+
+def build_impressum():
+    """Generiert die Impressum-Seite"""
+    html = f"""
+    <!DOCTYPE html>
+    <html lang="de">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Impressum | {SITE_NAME}</title>
+        {css_styles}
+    </head>
+    <body>
+        {build_nav()}
+        <main class="container legal-content">
+            <div class="section-card">
+                <h1>Impressum</h1>
+                <p>Angaben gemäß § 5 TMG</p>
+                
+                <h2>Betreiber der Website</h2>
+                <p>
+                    <strong>{IMPRESSUM_NAME}</strong><br>
+                    {IMPRESSUM_ADRESSE}
+                </p>
+
+                <h2>Kontakt</h2>
+                <p>
+                    E-Mail: <a href="mailto:{IMPRESSUM_EMAIL}">{IMPRESSUM_EMAIL}</a>
+                    {f'<br>Telefon: {IMPRESSUM_TEL}' if IMPRESSUM_TEL else ''}
+                </p>
+
+                <h2>Verantwortlich für den Inhalt</h2>
+                <p>
+                    Verantwortlich nach § 55 Abs. 2 RStV:<br>
+                    {IMPRESSUM_NAME}<br>
+                    {IMPRESSUM_ADRESSE}
+                </p>
+
+                <h2>Haftungsausschluss</h2>
+                <h3>Haftung für Inhalte</h3>
+                <p>Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen.</p>
+
+                <h3>Haftung für Links</h3>
+                <p>Unser Angebot enthält Links zu externen Webseiten Dritter, auf deren Inhalte wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen.</p>
+            </div>
+        </main>
+        {build_footer()}
+    </body>
+    </html>
+    """
+    with open(os.path.join(OUTPUT_DIR, "impressum.html"), "w", encoding="utf-8") as f: f.write(html)
+
+def build_datenschutz():
+    """Generiert die Datenschutz-Seite"""
+    html = f"""
+    <!DOCTYPE html>
+    <html lang="de">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Datenschutzerklärung | {SITE_NAME}</title>
+        {css_styles}
+    </head>
+    <body>
+        {build_nav()}
+        <main class="container legal-content">
+            <div class="section-card">
+                <h1>Datenschutzerklärung</h1>
+                
+                <h2>1. Datenschutz auf einen Blick</h2>
+                <h3>Allgemeine Hinweise</h3>
+                <p>Die folgenden Hinweise geben einen einfachen Überblick darüber, was mit Ihren personenbezogenen Daten passiert, wenn Sie diese Website besuchen.</p>
+
+                <h2>2. Hosting (GitHub Pages)</h2>
+                <p>Wir hosten unsere Website bei <strong>GitHub Inc.</strong> (88 Colin P Kelly Jr St, San Francisco, CA 94107, USA).<br>
+                GitHub erfasst Logfiles (IP-Adresse, Browser, etc.) zur Sicherheit und Stabilität. Weitere Infos: <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement" target="_blank">GitHub Privacy Statement</a>.</p>
+
+                <h2>3. Cookies & Analyse</h2>
+                <p>Diese Website verwendet keine Tracking-Cookies und keine Analyse-Tools (wie Google Analytics). Es werden lediglich technisch notwendige Daten durch den Hoster (GitHub) verarbeitet.</p>
+
+                <h2>4. Affiliate Links (Amazon)</h2>
+                <p>Wir nehmen am Amazon Partnerprogramm teil. Wenn Sie auf einen Amazon-Link klicken, gelangt Amazon an die Information, dass Sie von unserer Seite kommen (Referrer). Es werden keine persönlichen Daten von uns an Amazon übermittelt.</p>
+
+                <h2>5. Ihre Rechte</h2>
+                <p>Sie haben jederzeit das Recht auf Auskunft, Berichtigung oder Löschung Ihrer Daten. Wenden Sie sich dazu an die im Impressum angegebene Adresse.</p>
+            </div>
+        </main>
+        {build_footer()}
+    </body>
+    </html>
+    """
+    with open(os.path.join(OUTPUT_DIR, "datenschutz.html"), "w", encoding="utf-8") as f: f.write(html)
+
 
 # --- BUILD PROCESS ---
 def build():
@@ -261,10 +376,7 @@ def build():
                 <span style="font-size:1.2rem;">📷</span> Jetzt scannen
             </a>
             
-            <footer>
-                <p>&copy; {datetime.now().year} {SITE_NAME}</p>
-                <a href="impressum.html">Impressum</a> • <a href="{APP_URL}">Zur App</a>
-            </footer>
+            {build_footer()}
         </body>
         </html>
         """
@@ -278,17 +390,18 @@ def build():
         rating = item.get('health_check', {}).get('rating', '')
         cards_html += f"""<a href="{slug}.html" class="card filter-item"><div class="card-header"><span class="e-code">{item.get('e_number')}</span><span class="badge {get_risk_class(rating)}">{rating}</span></div><h3 class="card-title">{item.get('name')}</h3><p class="card-intro">{item.get('intro_hook')}</p></a>"""
     
-    index_html = f"""<!DOCTYPE html><html lang="de"><head><title>{SITE_NAME}</title><meta name="viewport" content="width=device-width, initial-scale=1">{css_styles}<script>function filterList() {{ var input = document.getElementById("search"); var filter = input.value.toUpperCase(); var cards = document.getElementsByClassName("filter-item"); for (var i = 0; i < cards.length; i++) {{ var txt = cards[i].innerText; if (txt.toUpperCase().indexOf(filter) > -1) {{ cards[i].style.display = "flex"; }} else {{ cards[i].style.display = "none"; }} }} }}</script></head><body>{build_nav()}<div class="hero"><h1>Was steckt in deinem Essen?</h1><p>Die große Datenbank. Oder nutze direkt unsere <a href="{APP_URL}" style="color:var(--app-color);">Scanner App</a>.</p><input type="text" id="search" onkeyup="filterList()" class="search-box" placeholder="🔍 E-Nummer suchen..."></div><main class="container"><div class="grid">{cards_html}</div></main><a href="{APP_URL}" target="_blank" class="fab-app"><span>📷</span> Jetzt scannen</a><footer><p>&copy; {datetime.now().year} {SITE_NAME}</p><a href="impressum.html">Impressum</a></footer></body></html>"""
+    index_html = f"""<!DOCTYPE html><html lang="de"><head><title>{SITE_NAME}</title><meta name="viewport" content="width=device-width, initial-scale=1">{css_styles}<script>function filterList() {{ var input = document.getElementById("search"); var filter = input.value.toUpperCase(); var cards = document.getElementsByClassName("filter-item"); for (var i = 0; i < cards.length; i++) {{ var txt = cards[i].innerText; if (txt.toUpperCase().indexOf(filter) > -1) {{ cards[i].style.display = "flex"; }} else {{ cards[i].style.display = "none"; }} }} }}</script></head><body>{build_nav()}<div class="hero"><h1>Was steckt in deinem Essen?</h1><p>Die große Datenbank. Oder nutze direkt unsere <a href="{APP_URL}" style="color:var(--app-color);">Scanner App</a>.</p><input type="text" id="search" onkeyup="filterList()" class="search-box" placeholder="🔍 E-Nummer suchen..."></div><main class="container"><div class="grid">{cards_html}</div></main><a href="{APP_URL}" target="_blank" class="fab-app"><span>📷</span> Jetzt scannen</a>{build_footer()}</body></html>"""
     with open(os.path.join(OUTPUT_DIR, "index.html"), "w", encoding="utf-8") as f: f.write(index_html)
     
-    # 3. LEGAL & SITEMAP
-    legal = f"<html><head><title>Rechtliches</title>{css_styles}</head><body>{build_nav()}<main class='container'><div class='section-card'><h1>Impressum</h1><p>{IMPRESSUM_NAME}</p></div></main></body></html>"
-    with open(os.path.join(OUTPUT_DIR, "impressum.html"), "w", encoding="utf-8") as f: f.write(legal)
+    # 3. LEGAL PAGES (Funktionen aufrufen)
+    build_impressum()
+    build_datenschutz()
     
+    # 4. SITEMAP
     sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join([f'  <url><loc>{u}</loc></url>\n' for u in sitemap_urls]) + '</urlset>'
     with open(os.path.join(OUTPUT_DIR, "sitemap.xml"), "w", encoding="utf-8") as f: f.write(sitemap)
 
-    print(f"✅ Webseite V3.0 mit App-Brücke generiert!")
+    print(f"✅ Webseite V3.0 mit App-Brücke & Rechtstexten generiert!")
 
 if __name__ == "__main__":
     build()
