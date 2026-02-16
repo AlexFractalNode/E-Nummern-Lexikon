@@ -12,22 +12,21 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
+      - name: Checkout Code 🛎️
         uses: actions/checkout@v3
 
-      - name: Setup Python
+      - name: Setup Python 🐍
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
 
-      # Wir brauchen keine externen Libraries (pandas etc.), da das Skript nur Standard-Python nutzt!
-      # Das macht den Build extrem schnell.
-
-      - name: Webseite bauen 🏗️
+      # Da wir nur Standard-Bibliotheken nutzen, ist kein 'pip install' nötig!
+      # WICHTIG: Stelle sicher, dass deine Python-Datei wirklich 'build_website.py' heißt.
+      - name: Webseite bauen (inkl. Rechtstexte) 🏗️
         run: python build_website.py
 
       - name: Deploy to GitHub Pages 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: site_output
+          folder: site_output # Das Script speichert alles hier rein
           branch: gh-pages
