@@ -15,9 +15,9 @@ APP_URL = "https://alexfractalnode.github.io/e-check-app/"
 APP_NAME = "E-Check App"
 
 # IMPRESSUM & DATENSCHUTZ KONFIGURATION
-IMPRESSUM_NAME = "Alexander Heinze"
-IMPRESSUM_ADRESSE = "Am Fuchsgraben 28, 08056 Zwickau"
-IMPRESSUM_EMAIL = "alexander.heinze.01@gmail.com"
+IMPRESSUM_NAME = ""
+IMPRESSUM_ADRESSE = ""
+IMPRESSUM_EMAIL = ""
 # Optional: Telefonnummer, falls gewünscht (sonst leer lassen)
 IMPRESSUM_TEL = "" 
 
@@ -405,3 +405,4 @@ def build():
 
 if __name__ == "__main__":
     build()
+
